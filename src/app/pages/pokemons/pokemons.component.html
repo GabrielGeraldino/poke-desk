@@ -47,5 +47,7 @@
     </div>
   </div>
 
-  <app-pokemon-card></app-pokemon-card>
+  <div *ngFor="let pokemon of allPokemons">
+    <app-pokemon-card></app-pokemon-card>
+  </div>
 </div>

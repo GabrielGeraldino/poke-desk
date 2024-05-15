@@ -3,7 +3,7 @@ export class PokemonFilterModel {
     Object.assign(this, data);
   }
 
-  Search?: string;
-  PageIndex: number = 0;
-  PageSize: number = 20;
+  q?: string;
+  page: number = 1;
+  pageSize: number = 20;
 }
