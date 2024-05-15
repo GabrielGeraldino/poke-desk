@@ -1,3 +1,17 @@
 import { Routes } from '@angular/router';
+import { HomePageComponent } from './pages/home-page/home-page.component';
+import { PokemonsComponent } from './pages/pokemons/pokemons.component';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    component: HomePageComponent,
+    data: { text: 'home-page' },
+  },
+  {
+    path: 'home-page',
+    component: HomePageComponent,
+    data: { text: 'home-page' },
+  },
+  { path: 'pokemons', component: PokemonsComponent, data: { text: 'pokemons' } }
+];
