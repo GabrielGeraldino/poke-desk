@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PokemonModel } from '../../models/PokemonModel';
-import { ModalController } from '@ionic/angular';
+import { lastValueFrom } from 'rxjs';
+import { PokemonService } from '../../services/PokenonService/pokemon.service';
+import { PokemonFilterModel } from '../../models/PokemonFilterModel';
+import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { SharedService } from '../../services/shared/shared.service';
 
 @Component({
@@ -10,34 +12,45 @@ import { SharedService } from '../../services/shared/shared.service';
   standalone: true,
   templateUrl: './cards-add.component.html',
   styleUrls: ['./cards-add.component.scss'],
-  imports: [SharedModule],
+  imports: [SharedModule, PokemonCardComponent],
 })
 export class CardsAddComponent implements OnInit {
   constructor(
-    private formBuilder: FormBuilder,
-    private modalController: ModalController,
+    private pokemonService: PokemonService,
     private sharedService: SharedService
-  ) {
-    this.deckForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      image: ['', Validators.required],
-    });
-  }
+  ) {}
 
-  hasDeck = false;
-  createForm = false;
-  deckForm: FormGroup;
-  deckImage?: File;
-  decks: any[] = [];
-  @Input() pokemon: PokemonModel = new PokemonModel();
+  filter: PokemonFilterModel = new PokemonFilterModel();
+  allPokemons: PokemonModel[] = [];
+  @Input() deckId: any;
+  decks: any;
+  deckLength: number = 0;
+  currentDeck: any;
 
-  ngOnInit() {
+  async ngOnInit() {
+    try {
+      await lastValueFrom(this.pokemonService.getAllPokemons(this.filter)).then(
+        (res: PokemonModel[]) => {
+          this.allPokemons = res;
+          console.log('this.allPokemons', this.allPokemons);
+        }
+      );
+    } catch (error) {
+      console.error('error', error);
+    }
+
     const decksData = localStorage.getItem('decks');
     this.decks = decksData ? JSON.parse(decksData) : [];
+
+    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
+    this.currentDeck = this.decks[deckIndex];
+
+    console.log('this.decks', this.currentDeck);
+    this.getCount();
   }
 
-  addToDeck(deckId: string) {
-    const deckIndex = this.decks.findIndex((d) => d.id === deckId);
+  addToDeck(pokemon: PokemonModel) {
+    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
 
     if (deckIndex !== -1) {
       if (this.decks[deckIndex].cards.length >= 60) {
@@ -50,13 +63,13 @@ export class CardsAddComponent implements OnInit {
       }
 
       const existingCard = this.decks[deckIndex].cards.find(
-        (card: any) => card.name === this.pokemon.name
+        (card: any) => card.name === pokemon.name
       );
 
       if (existingCard) {
         if (
           this.decks[deckIndex].cards.filter(
-            (card: any) => card.name === this.pokemon.name
+            (card: any) => card.name === pokemon.name
           ).length >= 4
         ) {
           this.sharedService.showToast(
@@ -68,7 +81,7 @@ export class CardsAddComponent implements OnInit {
         }
       }
 
-      this.decks[deckIndex].cards.push(this.pokemon);
+      this.decks[deckIndex].cards.push(pokemon);
       this.saveDecksToLocalStorage();
     }
   }
@@ -77,65 +90,14 @@ export class CardsAddComponent implements OnInit {
     const decksJson = JSON.stringify(this.decks);
     localStorage.setItem('decks', decksJson);
 
-    this.modalController.dismiss();
+    this.getCount();
+
     await this.sharedService.showToast('Card salvo com sucesso!');
   }
 
-  generateUniqueId(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  }
+  getCount() {
+    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
 
-  createDeck() {
-    if (this.deckForm.valid) {
-      const nameControl = this.deckForm.get('name');
-      const imageControl = this.deckForm.get('image');
-
-      if (nameControl && imageControl) {
-        const deck = {
-          name: nameControl.value,
-          image: imageControl.value,
-        };
-
-        this.saveToLocalStorage(deck);
-        this.createForm = false;
-      }
-    }
-  }
-
-  saveToLocalStorage(deck: any) {
-    const decksData = localStorage.getItem('decks');
-    const decks = decksData ? JSON.parse(decksData) : [];
-    const newDeck = {
-      id: this.generateUniqueId(),
-      name: deck.name,
-      image: deck.image,
-      cards: [],
-    };
-    decks.push(newDeck);
-    localStorage.setItem('decks', JSON.stringify(decks));
-
-    this.ngOnInit();
-  }
-
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    this.deckForm.patchValue({
-      image: null,
-    });
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imageControl = this.deckForm.get('image');
-      if (imageControl) {
-        imageControl.setValue(reader.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
-
-    console.log('this.deckForm', this.deckForm);
+    this.deckLength = this.decks[deckIndex].cards.length;
   }
 }

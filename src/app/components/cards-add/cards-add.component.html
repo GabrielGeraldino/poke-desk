@@ -1,99 +1,96 @@
-<div class="container">
-  <igx-card
-    class="h-auto rounded-lg overflow-hidden"
-    style="background-color: #f8f8f8"
-  >
+<div class="overflow-y-auto p-6" style="background-color: #f3f3f3f3">
+  <igx-card>
     <igx-card-header
       class="flex items-center justify-between px-4 py-2 bg-gray-200"
     >
-      <div class="text-black font-bold text-xl">Decks</div>
+      <span class="text-2xl">Pokemons do meu deck: {{ deckLength }} / 60 </span>
     </igx-card-header>
-    <igx-card-content
-      class="px-4 py-2 flex flex-col items-center justify-center"
-    >
-      <div class="text-center">
-        <div *ngIf="decks.length == 0">
-          <h2 class="text-2xl font-bold mb-4">Nenhum deck criado</h2>
-          <p class="text-gray-600 mb-6">
-            Você ainda não criou nenhum deck. Clique no botão abaixo para
-            começar.
-          </p>
-        </div>
 
-        <div *ngIf="decks.length > 0">
-          <h2 class="text-2xl font-bold mb-4">Meus Decks</h2>
-          <p class="text-gray-600 mb-6">
-            Selecione o deck que deseja adicionar
-          </p>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div
-              *ngFor="let deck of decks"
-              class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:cursor-pointer"
-              (click)="addToDeck(deck.id)"
-            >
-              <a class="block">
-                <img
-                  [src]="deck.image"
-                  alt="{{ deck.name }}"
-                  class="w-full h-38 object-cover"
-                />
-                <div class="p-2">
-                  <h4 class="text-base font-bold">{{ deck.name }}</h4>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <button
-          igxButton="flat"
-          igxRipple
-          class="igx-button--flat"
-          (click)="createForm = true"
+    <section class="overflow-x-auto whitespace-nowrap mt-3">
+      <div class="inline-block">
+        <div
+          *ngFor="let card of currentDeck?.cards"
+          class="inline-block poke-card"
         >
-          Criar Novo Deck
-        </button>
-
-        <div *ngIf="createForm" class="mt-6">
-          <h3 class="text-xl font-bold mb-4">Criar Novo Deck</h3>
-          <form [formGroup]="deckForm" (ngSubmit)="createDeck()">
-            <div class="mb-4">
-              <label for="name" class="block text-gray-700 font-bold mb-2">
-                Nome do Deck
-              </label>
-              <input
-                id="name"
-                type="text"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                formControlName="name"
-                required
-              />
-            </div>
-            <div class="mb-4">
-              <label for="image" class="block text-gray-700 font-bold mb-2">
-                Imagem do Deck
-              </label>
-              <input
-                id="image"
-                type="file"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                (change)="onFileChange($event)"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              igxButton="flat"
-              igxRipple
-              class="igx-button--flat"
-              [disabled]="!deckForm.valid"
-            >
-              Salvar
-            </button>
-          </form>
+          <app-pokemon-card [pokemon]="card" [remove]="true"></app-pokemon-card>
         </div>
       </div>
-    </igx-card-content>
+    </section>
+  </igx-card>
+
+  <igx-card style="margin-top: 25px">
+    <igx-card-header
+      class="flex items-center justify-between px-4 py-2 bg-gray-200"
+    >
+      <span class="text-2xl"
+        >Selecione os pokemons que deseja adicionar ao seu deck!
+      </span>
+    </igx-card-header>
+
+    <div class="flex items-center flex-col p-4">
+      <div class="relative w-full">
+        <input
+          type="text"
+          class="w-full bg-gray-200 rounded-l-md rounded-r-md py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-400"
+          placeholder="Buscar pokémon..."
+        />
+        <div
+          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+        >
+          <svg
+            class="h-5 w-5 text-gray-400"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div>
+        <igx-drop-down #countriesDropDown [height]="'400px'" [width]="'250px'">
+          <igx-tree #igxTree selection="BiState">
+            <!-- (nodeSelection)="onNodeSelection($event)" -->
+            <!-- <igx-tree-node
+            *ngFor="let country of countries"
+            [data]="country"
+            [expanded]="true"
+            [selected]="true"
+          >
+            {{ country.Name }}
+            <igx-tree-node *ngFor="let city of country.Cities" [data]="city">
+              {{ city.Name }}
+            </igx-tree-node>
+          </igx-tree-node> -->
+          </igx-tree>
+        </igx-drop-down>
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+    >
+      <div
+        *ngFor="let pokemon of allPokemons"
+        class="transition-all duration-300 ease-in-out transform hover:scale-105 hover:cursor-pointer"
+      >
+        <app-pokemon-card
+          [pokemon]="pokemon"
+          (click)="addToDeck(pokemon)"
+        ></app-pokemon-card>
+      </div>
+    </div>
+
+    <div class="mt-5 w-full flex items-center justify-center">
+      <a
+        routerLink="/pokemons"
+        class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+        >Ver Mais</a
+      >
+    </div>
   </igx-card>
 </div>

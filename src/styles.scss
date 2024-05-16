@@ -29,5 +29,13 @@
 }
 
 .custom-modal {
-  --height: fit-content;
+  --width: fit-content;
+  --max-width: 90vw;
+  --height: 90vh;
+  // --max-height: 90vh;
+  --border-radius: 8px;
+}
+
+ion-modal {
+  border-radius: 8px;
 }

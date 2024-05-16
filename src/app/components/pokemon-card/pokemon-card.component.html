@@ -1,19 +1,40 @@
-<igx-card
-  class="h-auto rounded-lg overflow-hidden"
-  style="background-color: #f8f8f8"
->
-  <igx-card-header
-    class="flex items-center justify-between px-4 py-2 bg-gray-200"
+<div class="relative">
+  <div
+    *ngIf="remove"
+    class="bg-red-400 hover:bg-gray-500 text-white font-bold py-1 px-1 rounded absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center"
   >
-    <div class="text-black font-bold text-base">{{ pokemon.name }}</div>
-    <button
-      (click)="openModal()"
-      class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
     >
-      +
-    </button>
-  </igx-card-header>
-  <igx-card-content class="px-4 py-2">
-    <img [src]="pokemon.images?.large" alt="Pyroar" class="w-full" />
-  </igx-card-content>
-</igx-card>
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
+    </svg>
+  </div>
+  <igx-card
+    class="h-auto rounded-lg overflow-hidden mt-6"
+    style="background-color: #f8f8f8"
+  >
+    <igx-card-header
+      class="flex items-center justify-between px-4 py-2 bg-gray-200"
+    >
+      <div class="text-black font-bold text-base">{{ pokemon.name }}</div>
+      <button
+        *ngIf="!remove"
+        class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+      >
+        +
+      </button>
+    </igx-card-header>
+    <igx-card-content class="px-4 py-2">
+      <img [src]="pokemon.images?.large" alt="Pyroar" class="w-full" />
+    </igx-card-content>
+  </igx-card>
+</div>
