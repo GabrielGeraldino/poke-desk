@@ -1,0 +1,99 @@
+<div class="container">
+  <igx-card
+    class="h-auto rounded-lg overflow-hidden"
+    style="background-color: #f8f8f8"
+  >
+    <igx-card-header
+      class="flex items-center justify-between px-4 py-2 bg-gray-200"
+    >
+      <div class="text-black font-bold text-xl">Decks</div>
+    </igx-card-header>
+    <igx-card-content
+      class="px-4 py-2 flex flex-col items-center justify-center"
+    >
+      <div class="text-center">
+        <div *ngIf="decks.length == 0">
+          <h2 class="text-2xl font-bold mb-4">Nenhum deck criado</h2>
+          <p class="text-gray-600 mb-6">
+            Você ainda não criou nenhum deck. Clique no botão abaixo para
+            começar.
+          </p>
+        </div>
+
+        <div *ngIf="decks.length > 0">
+          <h2 class="text-2xl font-bold mb-4">Meus Decks</h2>
+          <p class="text-gray-600 mb-6">
+            Selecione o deck que deseja adicionar
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div
+              *ngFor="let deck of decks"
+              class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:cursor-pointer"
+              (click)="addToDeck(deck.id)"
+            >
+              <a class="block">
+                <img
+                  [src]="deck.image"
+                  alt="{{ deck.name }}"
+                  class="w-full h-38 object-cover"
+                />
+                <div class="p-2">
+                  <h4 class="text-base font-bold">{{ deck.name }}</h4>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <button
+          igxButton="flat"
+          igxRipple
+          class="igx-button--flat"
+          (click)="createForm = true"
+        >
+          Criar Novo Deck
+        </button>
+
+        <div *ngIf="createForm" class="mt-6">
+          <h3 class="text-xl font-bold mb-4">Criar Novo Deck</h3>
+          <form [formGroup]="deckForm" (ngSubmit)="createDeck()">
+            <div class="mb-4">
+              <label for="name" class="block text-gray-700 font-bold mb-2">
+                Nome do Deck
+              </label>
+              <input
+                id="name"
+                type="text"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                formControlName="name"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="image" class="block text-gray-700 font-bold mb-2">
+                Imagem do Deck
+              </label>
+              <input
+                id="image"
+                type="file"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                (change)="onFileChange($event)"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              igxButton="flat"
+              igxRipple
+              class="igx-button--flat"
+              [disabled]="!deckForm.valid"
+            >
+              Salvar
+            </button>
+          </form>
+        </div>
+      </div>
+    </igx-card-content>
+  </igx-card>
+</div>

@@ -5,6 +5,7 @@ import { PipesModule } from '../pipes/pipes.module';
 import { SharedModule } from '../shared/shared.module';
 import { HeaderComponent } from './header/header.component';
 import { PokemonCardComponent } from './pokemon-card/pokemon-card.component';
+import { CardsAddComponent } from './cards-add/cards-add.component';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { PokemonCardComponent } from './pokemon-card/pokemon-card.component';
     SharedModule,
     HeaderComponent,
     PokemonCardComponent,
+    CardsAddComponent,
   ],
-  exports: [HeaderComponent, PokemonCardComponent],
+  exports: [HeaderComponent, PokemonCardComponent, CardsAddComponent],
 })
 export class ComponentsModule {}

@@ -1,34 +1,19 @@
-<igx-card class="w-64 h-auto bg-red-500 rounded-lg overflow-hidden">
+<igx-card
+  class="h-auto rounded-lg overflow-hidden"
+  style="background-color: #f8f8f8"
+>
   <igx-card-header
-    class="flex items-center justify-between px-4 py-2 bg-red-600"
+    class="flex items-center justify-between px-4 py-2 bg-gray-200"
   >
-    <div class="text-white font-bold text-xl">Pyroar</div>
-    <div class="flex items-center">
-      <div
-        class="bg-white rounded-full w-6 h-6 mr-2 flex items-center justify-center"
-      >
-        <span class="text-red-600 font-bold">419</span>
-      </div>
-      <div
-        class="bg-white rounded-full w-6 h-6 flex items-center justify-center"
-      >
-        <span class="text-red-600 font-bold">49</span>
-      </div>
-    </div>
+    <div class="text-black font-bold text-base">{{ pokemon.name }}</div>
+    <button
+      (click)="openModal()"
+      class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+    >
+      +
+    </button>
   </igx-card-header>
   <igx-card-content class="px-4 py-2">
-    <div class="flex items-center mb-2">
-      <div
-        class="bg-green-500 rounded-full px-2 py-1 mr-2 text-white text-sm font-bold"
-      >
-        Grass
-      </div>
-      <div
-        class="bg-blue-500 rounded-full px-2 py-1 text-white text-sm font-bold"
-      >
-        Poison
-      </div>
-    </div>
-    <img src="pyroar.png" alt="Pyroar" class="w-full" />
+    <img [src]="pokemon.images?.large" alt="Pyroar" class="w-full" />
   </igx-card-content>
 </igx-card>
