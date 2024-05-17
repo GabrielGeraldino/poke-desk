@@ -67,3 +67,11 @@ O projeto está estruturado da seguinte forma:
   - `pages/`: Contém as pastas de cada página do projeto.
   - `models/`: Contém os modelos de dados utilizandos no projeto.
   - `components/`: Contém os componentes utilizandos no projeto.
+
+## Link para o projeto
+
+O projeto também está disponivel no site abaixo:
+
+   ```shell
+   https://poke-desk-one.vercel.app/
+   ```
