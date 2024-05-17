@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { PipesModule } from '../pipes/pipes.module';
 
 import {
   IgxInputGroupModule,
@@ -29,7 +28,6 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     RouterModule,
     HttpClientModule,
-    PipesModule,
     IgxInputGroupModule,
     IgxButtonModule,
     IgxIconModule,
@@ -51,7 +49,6 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     RouterModule,
     HttpClientModule,
-    PipesModule,
     IgxInputGroupModule,
     IgxButtonModule,
     IgxIconModule,
