@@ -15,6 +15,7 @@ import {
   IgxTreeModule,
   IgxChipsModule,
   IgxToastModule,
+  IgxSelectModule,
 } from 'igniteui-angular';
 import { IonicModule } from '@ionic/angular';
 
@@ -38,6 +39,7 @@ import { IonicModule } from '@ionic/angular';
     IgxChipsModule,
     ReactiveFormsModule,
     IgxToastModule,
+    IgxSelectModule,
     IonicModule.forRoot(),
   ],
   exports: [
@@ -58,6 +60,7 @@ import { IonicModule } from '@ionic/angular';
     IgxChipsModule,
     ReactiveFormsModule,
     IgxToastModule,
+    IgxSelectModule,
     IonicModule,
   ],
 })

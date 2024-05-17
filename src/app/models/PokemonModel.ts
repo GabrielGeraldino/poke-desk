@@ -68,3 +68,42 @@ export class PokemonModel {
     };
   };
 }
+
+export class RaritiesModel {
+  data: [] = [];
+}
+
+export class TypeModel {
+  data: [] = [];
+}
+
+export class SupertypeModel {
+  data: [] = [];
+}
+
+export class SubtypeModel {
+  data: [] = [];
+}
+export class SetModel {
+  constructor(data = {}) {
+    Object.assign(this, data);
+  }
+
+  id?: string;
+  name?: string;
+  series?: string;
+  printedTotal?: number;
+  total?: number;
+  legalities = {
+    unlimited: '',
+    standard: '',
+    expanded: '',
+  };
+  ptcgoCode?: string;
+  releaseDate?: Date;
+  updatedAt?: Date;
+  images = {
+    symbol: '',
+    logo: '',
+  };
+}

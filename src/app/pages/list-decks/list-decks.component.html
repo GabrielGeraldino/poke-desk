@@ -20,8 +20,10 @@
           </p>
         </div>
 
-        <div *ngIf="decks.length > 0">
-          <h2 class="text-2xl font-bold mb-4">Meus Decks</h2>
+        <div>
+          <h2 *ngIf="decks.length > 0" class="text-2xl font-bold mb-4">
+            Meus Decks
+          </h2>
 
           <button
             igxButton="flat"

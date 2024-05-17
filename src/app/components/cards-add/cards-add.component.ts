@@ -1,9 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
-import { PokemonModel } from '../../models/PokemonModel';
+import {
+  PokemonModel,
+  RaritiesModel,
+  SubtypeModel,
+  SupertypeModel,
+  TypeModel,
+} from '../../models/PokemonModel';
 import { lastValueFrom } from 'rxjs';
 import { PokemonService } from '../../services/PokenonService/pokemon.service';
-import { PokemonFilterModel } from '../../models/PokemonFilterModel';
+import {
+  PokemonFilterBaseModel,
+  PokemonFilterModel,
+} from '../../models/PokemonFilterModel';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { SharedService } from '../../services/shared/shared.service';
 import { AlertController, ModalController } from '@ionic/angular';
@@ -25,6 +34,10 @@ export class CardsAddComponent implements OnInit {
 
   filter: PokemonFilterModel = new PokemonFilterModel();
   allPokemons: PokemonModel[] = [];
+  allTypes: TypeModel[] = [];
+  allSubTypes: SubtypeModel[] = [];
+  allSuperType: SupertypeModel[] = [];
+  allRarities: RaritiesModel[] = [];
   @Input() deckId: any;
   decks: any;
   deckLength: number = 0;
@@ -34,10 +47,21 @@ export class CardsAddComponent implements OnInit {
   search = '';
   loading = false;
   loadingButton = false;
+  filterBase: PokemonFilterBaseModel = new PokemonFilterBaseModel();
+  parameter: 'name' | 'types' | 'subtypes' | 'supertypes' | 'rarities' = 'name';
+  selectedType: any;
+  selectedSubtype: any;
+  selectedSupertype: any;
+  selectedRarity: any;
 
   async ngOnInit() {
     this.loading = true;
     await this.getPokemons();
+
+    await this.getTypes();
+    await this.getSubtTypes();
+    await this.getSuperTypes();
+    await this.getRarities();
 
     const decksData = localStorage.getItem('decks');
     this.decks = decksData ? JSON.parse(decksData) : [];
@@ -46,6 +70,64 @@ export class CardsAddComponent implements OnInit {
     this.currentDeck = this.decks[this.deckIndex];
 
     this.getCount();
+  }
+
+  async getTypes() {
+    try {
+      const res: TypeModel = await lastValueFrom(
+        this.pokemonService.getTypes()
+      );
+
+      this.allTypes = res.data;
+      console.log('this.allTypes', this.allTypes);
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
+  }
+  async getSubtTypes() {
+    try {
+      const res: SubtypeModel = await lastValueFrom(
+        this.pokemonService.getSubtTypes()
+      );
+
+      this.allSubTypes = res.data;
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
+  }
+  async getSuperTypes() {
+    try {
+      const res: SupertypeModel = await lastValueFrom(
+        this.pokemonService.getSuperTypes()
+      );
+
+      this.allSuperType = res.data;
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
+  }
+  async getRarities() {
+    try {
+      const res: RaritiesModel = await lastValueFrom(
+        this.pokemonService.getRarities()
+      );
+
+      this.allRarities = res.data;
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
   }
 
   async getPokemons(moreResult = false) {
@@ -73,24 +155,78 @@ export class CardsAddComponent implements OnInit {
     this.loading = false;
   }
 
-  async getPokemonsFilter() {
-    this.loading = true;
+  async getPokemonsFilter(
+    searchIncome?: any,
+    increasePage = false,
+    parameter:
+      | 'name'
+      | 'types'
+      | 'subtypes'
+      | 'supertypes'
+      | 'rarities' = 'name',
+    changeParam = false,
+    resetOthersFilter = false
+  ) {
+    if (searchIncome) {
+      this.search = searchIncome.detail.value
+        ? searchIncome.detail.value
+        : null;
+    }
+
+    this.loading = increasePage ? false : true;
+    this.loadingButton = increasePage;
+    this.parameter = changeParam ? parameter : this.parameter;
+
+    if (resetOthersFilter) {
+      await this.resetOthersFilter(this.parameter);
+    }
+
+    this.filterBase.page = increasePage ? +1 : this.filterBase.page;
 
     if (this.search.length == 0) {
       await this.getPokemons();
     } else {
       try {
-        await lastValueFrom(
-          this.pokemonService.getAllPokemonsFilter(this.search)
-        ).then((res: PokemonModel[]) => {
+        const res: PokemonModel[] = await lastValueFrom(
+          this.pokemonService.getAllPokemonsFilter(
+            this.search,
+            this.parameter,
+            this.filterBase
+          )
+        );
+
+        if (increasePage) {
+          this.allPokemons = [...this.allPokemons, ...res];
+        } else {
           this.allPokemons = res;
-          console.log('this.allPokemons', this.allPokemons);
-        });
+        }
       } catch (error) {
         console.error('error', error);
       }
       this.loading = false;
+      this.loadingButton = false;
     }
+  }
+
+  async resetOthersFilter(filterType: any) {
+    console.log('filterType', filterType);
+    if (filterType != 'types') {
+      this.selectedType = '';
+    }
+    if (filterType != 'subtypes') {
+      this.selectedSubtype = '';
+    }
+    if (filterType != 'supertypes') {
+      this.selectedSupertype = '';
+    }
+    if (filterType != 'rarities') {
+      this.selectedRarity = '';
+    }
+
+    console.log('this.selectedType', this.selectedType);
+    console.log('this.selectedSubtype', this.selectedSubtype);
+    console.log('this.selectedSupertype', this.selectedSupertype);
+    console.log('this.selectedRarity', this.selectedRarity);
   }
 
   async addToDeck(pokemon: PokemonModel) {

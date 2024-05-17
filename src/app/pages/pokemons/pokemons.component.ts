@@ -3,7 +3,10 @@ import { PokemonCardComponent } from '../../components/pokemon-card/pokemon-card
 import { SharedModule } from '../../shared/shared.module';
 import { lastValueFrom } from 'rxjs';
 import { PokemonService } from '../../services/PokenonService/pokemon.service';
-import { PokemonFilterModel } from '../../models/PokemonFilterModel';
+import {
+  PokemonFilterBaseModel,
+  PokemonFilterModel,
+} from '../../models/PokemonFilterModel';
 import { PokemonModel } from '../../models/PokemonModel';
 
 @Component({
@@ -17,6 +20,7 @@ export class PokemonsComponent implements OnInit {
   constructor(private pokemonService: PokemonService) {}
 
   filter: PokemonFilterModel = new PokemonFilterModel();
+  filterBase: PokemonFilterBaseModel = new PokemonFilterBaseModel();
   allPokemons: PokemonModel[] = [];
   skeletonCount = 10;
   loading = false;
@@ -61,7 +65,11 @@ export class PokemonsComponent implements OnInit {
     } else {
       try {
         await lastValueFrom(
-          this.pokemonService.getAllPokemonsFilter(this.search)
+          this.pokemonService.getAllPokemonsFilter(
+            this.search,
+            'name',
+            this.filterBase
+          )
         ).then((res: PokemonModel[]) => {
           this.allPokemons = res;
           console.log('this.allPokemons', this.allPokemons);
