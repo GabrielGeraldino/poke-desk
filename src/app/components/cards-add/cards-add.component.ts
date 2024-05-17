@@ -6,6 +6,7 @@ import { PokemonService } from '../../services/PokenonService/pokemon.service';
 import { PokemonFilterModel } from '../../models/PokemonFilterModel';
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { SharedService } from '../../services/shared/shared.service';
+import { AlertController, ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-cards-add',
@@ -17,7 +18,9 @@ import { SharedService } from '../../services/shared/shared.service';
 export class CardsAddComponent implements OnInit {
   constructor(
     private pokemonService: PokemonService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private alertController: AlertController,
+    private modalController: ModalController
   ) {}
 
   filter: PokemonFilterModel = new PokemonFilterModel();
@@ -26,34 +29,73 @@ export class CardsAddComponent implements OnInit {
   decks: any;
   deckLength: number = 0;
   currentDeck: any;
+  deckIndex: number = 0;
+  skeletonCount = 10;
+  search = '';
+  loading = false;
+  loadingButton = false;
 
   async ngOnInit() {
-    try {
-      await lastValueFrom(this.pokemonService.getAllPokemons(this.filter)).then(
-        (res: PokemonModel[]) => {
-          this.allPokemons = res;
-          console.log('this.allPokemons', this.allPokemons);
-        }
-      );
-    } catch (error) {
-      console.error('error', error);
-    }
+    this.loading = true;
+    await this.getPokemons();
 
     const decksData = localStorage.getItem('decks');
     this.decks = decksData ? JSON.parse(decksData) : [];
 
-    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
-    this.currentDeck = this.decks[deckIndex];
+    this.deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
+    this.currentDeck = this.decks[this.deckIndex];
 
-    console.log('this.decks', this.currentDeck);
     this.getCount();
   }
 
-  addToDeck(pokemon: PokemonModel) {
-    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
+  async getPokemons(moreResult = false) {
+    this.filter.page += moreResult ? 1 : 0;
+    this.loadingButton = true;
 
-    if (deckIndex !== -1) {
-      if (this.decks[deckIndex].cards.length >= 60) {
+    try {
+      const res: PokemonModel[] = await lastValueFrom(
+        this.pokemonService.getAllPokemons(this.filter)
+      );
+
+      if (moreResult) {
+        this.allPokemons = [...this.allPokemons, ...res];
+      } else {
+        this.allPokemons = res;
+      }
+
+      this.loadingButton = false;
+      console.log('this.allPokemons', this.allPokemons);
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
+  }
+
+  async getPokemonsFilter() {
+    this.loading = true;
+
+    if (this.search.length == 0) {
+      await this.getPokemons();
+    } else {
+      try {
+        await lastValueFrom(
+          this.pokemonService.getAllPokemonsFilter(this.search)
+        ).then((res: PokemonModel[]) => {
+          this.allPokemons = res;
+          console.log('this.allPokemons', this.allPokemons);
+        });
+      } catch (error) {
+        console.error('error', error);
+      }
+      this.loading = false;
+    }
+  }
+
+  async addToDeck(pokemon: PokemonModel) {
+    if (this.deckIndex !== -1) {
+      if (this.decks[this.deckIndex].cards.length >= 60) {
         this.sharedService.showToast(
           'Você já atingiu o número máximo de 60 cartas neste deck.',
           2500,
@@ -62,13 +104,13 @@ export class CardsAddComponent implements OnInit {
         return;
       }
 
-      const existingCard = this.decks[deckIndex].cards.find(
+      const existingCard = this.decks[this.deckIndex].cards.find(
         (card: any) => card.name === pokemon.name
       );
 
       if (existingCard) {
         if (
-          this.decks[deckIndex].cards.filter(
+          this.decks[this.deckIndex].cards.filter(
             (card: any) => card.name === pokemon.name
           ).length >= 4
         ) {
@@ -81,8 +123,8 @@ export class CardsAddComponent implements OnInit {
         }
       }
 
-      this.decks[deckIndex].cards.push(pokemon);
-      this.saveDecksToLocalStorage();
+      this.decks[this.deckIndex].cards.push(pokemon);
+      this.getCount();
     }
   }
 
@@ -92,12 +134,38 @@ export class CardsAddComponent implements OnInit {
 
     this.getCount();
 
-    await this.sharedService.showToast('Card salvo com sucesso!');
+    await this.sharedService.showToast('Cards salvo com sucesso!');
+    await this.modalController.dismiss({
+      deck: this.decks[this.deckIndex],
+    });
   }
 
   getCount() {
-    const deckIndex = this.decks.findIndex((d: any) => d.id === this.deckId);
+    this.deckLength = this.decks[this.deckIndex].cards.length;
+  }
 
-    this.deckLength = this.decks[deckIndex].cards.length;
+  async close() {
+    const alert = await this.alertController.create({
+      header: 'Tem certeza que deseja fechar?',
+      message: 'Se você fechar, seu deck não será salvo!',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          role: 'confirm',
+          handler: () => {
+            this.modalController.dismiss({
+              deck: this.decks[this.deckIndex],
+              close: true,
+            });
+          },
+        },
+      ],
+      cssClass: 'custon-alert',
+    });
+    await alert.present();
   }
 }

@@ -22,6 +22,7 @@ import { IonicModule } from '@ionic/angular';
   declarations: [],
   imports: [
     CommonModule,
+    IgxChipsModule,
     FormsModule,
     RouterModule,
     HttpClientModule,
@@ -41,6 +42,7 @@ import { IonicModule } from '@ionic/angular';
   ],
   exports: [
     CommonModule,
+    IgxChipsModule,
     FormsModule,
     RouterModule,
     HttpClientModule,

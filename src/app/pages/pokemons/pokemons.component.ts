@@ -18,17 +18,58 @@ export class PokemonsComponent implements OnInit {
 
   filter: PokemonFilterModel = new PokemonFilterModel();
   allPokemons: PokemonModel[] = [];
+  skeletonCount = 10;
+  loading = false;
+  loadingButton = false;
+  search = '';
 
   async ngOnInit() {
+    this.loading = true;
+    await this.getPokemons();
+  }
+
+  async getPokemons(moreResult = false) {
+    this.filter.page += moreResult ? 1 : 0;
+    this.loadingButton = true;
+
     try {
-      await lastValueFrom(this.pokemonService.getAllPokemons(this.filter)).then(
-        (res: PokemonModel[]) => {
+      const res: PokemonModel[] = await lastValueFrom(
+        this.pokemonService.getAllPokemons(this.filter)
+      );
+
+      if (moreResult) {
+        this.allPokemons = [...this.allPokemons, ...res];
+      } else {
+        this.allPokemons = res;
+      }
+
+      this.loadingButton = false;
+      console.log('this.allPokemons', this.allPokemons);
+    } catch (error) {
+      this.loadingButton = false;
+      console.error('error', error);
+    }
+
+    this.loading = false;
+  }
+
+  async getPokemonsFilter() {
+    this.loading = true;
+
+    if (this.search.length == 0) {
+      await this.getPokemons();
+    } else {
+      try {
+        await lastValueFrom(
+          this.pokemonService.getAllPokemonsFilter(this.search)
+        ).then((res: PokemonModel[]) => {
           this.allPokemons = res;
           console.log('this.allPokemons', this.allPokemons);
-        }
-      );
-    } catch (error) {
-      console.error('error', error);
+        });
+      } catch (error) {
+        console.error('error', error);
+      }
+      this.loading = false;
     }
   }
 }

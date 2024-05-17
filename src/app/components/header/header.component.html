@@ -4,9 +4,29 @@
       <img src="../../../assets/images/Logo.svg" alt="Logo" class="h-10" />
     </a>
     <ul class="flex space-x-4">
-      <li><a routerLink="/" class="text-gray-800">Home</a></li>
-      <li><a routerLink="/sobre" class="text-gray-800">Sobre</a></li>
-      <li><a routerLink="/contato" class="text-gray-800">Contato</a></li>
+      <li>
+        <a
+          (click)="navigate('home-page')"
+          class="text-gray-800 hover:scale-105 hover:cursor-pointer"
+          >Home</a
+        >
+      </li>
+
+      <li>
+        <a
+          (click)="navigate('list-decks')"
+          class="text-gray-800 hover:scale-105 hover:cursor-pointer"
+          >Meus Decks</a
+        >
+      </li>
+
+      <li>
+        <a
+          (click)="navigate('pokemons')"
+          class="text-gray-800 hover:scale-105 hover:cursor-pointer"
+          >Ver Pokémons</a
+        >
+      </li>
     </ul>
   </div>
 </div>

@@ -4,7 +4,7 @@
 >
   <div class="flex items-center flex-col">
     <section class="p-9">
-      <span class="text-3xl">800 Pokemons para sua escolha!</span>
+      <span class="text-3xl">Pokemons para visualizar!</span>
     </section>
 
     <div class="relative w-full mb-5">
@@ -12,6 +12,8 @@
         type="text"
         class="w-full bg-gray-200 rounded-l-md rounded-r-md py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-400"
         placeholder="Buscar pokémon..."
+        [(ngModel)]="search"
+        (ngModelChange)="getPokemonsFilter()"
       />
       <div
         class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -29,29 +31,11 @@
         </svg>
       </div>
     </div>
-
-    <div>
-      <igx-drop-down #countriesDropDown [height]="'400px'" [width]="'250px'">
-        <igx-tree #igxTree selection="BiState">
-          <!-- (nodeSelection)="onNodeSelection($event)" -->
-          <!-- <igx-tree-node
-            *ngFor="let country of countries"
-            [data]="country"
-            [expanded]="true"
-            [selected]="true"
-          >
-            {{ country.Name }}
-            <igx-tree-node *ngFor="let city of country.Cities" [data]="city">
-              {{ city.Name }}
-            </igx-tree-node>
-          </igx-tree-node> -->
-        </igx-tree>
-      </igx-drop-down>
-    </div>
   </div>
 
   <div
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+    *ngIf="!loading"
   >
     <div
       *ngFor="let pokemon of allPokemons"
@@ -61,11 +45,27 @@
     </div>
   </div>
 
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+    *ngIf="loading"
+  >
+    <div *ngFor="let i of [].constructor(skeletonCount); let index = index">
+      <ion-skeleton-text
+        animated
+        style="width: 100%; height: 200px"
+      ></ion-skeleton-text>
+    </div>
+  </div>
+
   <div class="mt-5 w-full flex items-center justify-center">
     <a
-      routerLink="/pokemons"
-      class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
-      >Ver Mais</a
+      *ngIf="!loadingButton"
+      (click)="getPokemons(true)"
+      class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded hover:scale-105 hover:cursor-pointer"
     >
+      Ver Mais
+    </a>
+
+    <div *ngIf="loadingButton" class="spinner"></div>
   </div>
 </div>

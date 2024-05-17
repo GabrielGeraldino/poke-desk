@@ -1,96 +1,141 @@
 <div class="overflow-y-auto p-6" style="background-color: #f3f3f3f3">
-  <igx-card>
-    <igx-card-header
-      class="flex items-center justify-between px-4 py-2 bg-gray-200"
-    >
-      <span class="text-2xl">Pokemons do meu deck: {{ deckLength }} / 60 </span>
-    </igx-card-header>
-
-    <section class="overflow-x-auto whitespace-nowrap mt-3">
-      <div class="inline-block">
-        <div
-          *ngFor="let card of currentDeck?.cards"
-          class="inline-block poke-card"
+  <div class="overflow-y-auto p-6" style="background-color: #f3f3f3f3">
+    <div class="mb-4 fixed text-right">
+      <button
+        (click)="close()"
+        class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-2"
+      >
+        Fechar
+      </button>
+      <button
+        (click)="saveDecksToLocalStorage()"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        [disabled]="deckLength < 24"
+      >
+        Salvar
+      </button>
+      <div class="mt-4" *ngIf="deckLength < 24">
+        <span class="text-red-400"
+          >Seu deck deve conter no mínimo 24 cartas para salvar!</span
         >
-          <app-pokemon-card [pokemon]="card" [remove]="true"></app-pokemon-card>
-        </div>
-      </div>
-    </section>
-  </igx-card>
-
-  <igx-card style="margin-top: 25px">
-    <igx-card-header
-      class="flex items-center justify-between px-4 py-2 bg-gray-200"
-    >
-      <span class="text-2xl"
-        >Selecione os pokemons que deseja adicionar ao seu deck!
-      </span>
-    </igx-card-header>
-
-    <div class="flex items-center flex-col p-4">
-      <div class="relative w-full">
-        <input
-          type="text"
-          class="w-full bg-gray-200 rounded-l-md rounded-r-md py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          placeholder="Buscar pokémon..."
-        />
-        <div
-          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-        >
-          <svg
-            class="h-5 w-5 text-gray-400"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div>
-        <igx-drop-down #countriesDropDown [height]="'400px'" [width]="'250px'">
-          <igx-tree #igxTree selection="BiState">
-            <!-- (nodeSelection)="onNodeSelection($event)" -->
-            <!-- <igx-tree-node
-            *ngFor="let country of countries"
-            [data]="country"
-            [expanded]="true"
-            [selected]="true"
-          >
-            {{ country.Name }}
-            <igx-tree-node *ngFor="let city of country.Cities" [data]="city">
-              {{ city.Name }}
-            </igx-tree-node>
-          </igx-tree-node> -->
-          </igx-tree>
-        </igx-drop-down>
       </div>
     </div>
+    <igx-card class="mt-16">
+      <igx-card-header
+        class="flex items-center justify-between px-4 py-2 bg-gray-200"
+      >
+        <span class="text-2xl"
+          >Pokemons do meu deck: {{ deckLength }} / 60
+        </span>
+      </igx-card-header>
 
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
-    >
+      <section class="overflow-x-auto whitespace-nowrap mt-3">
+        <div class="inline-block">
+          <div *ngIf="allPokemons.length === 0">
+            <div
+              *ngFor="let i of [].constructor(skeletonCount); let index = index"
+              class="inline-block poke-card"
+            >
+              <ion-skeleton-text
+                animated
+                style="width: 100px; height: 170px"
+              ></ion-skeleton-text>
+            </div>
+          </div>
+
+          <div
+            *ngFor="let card of currentDeck?.cards"
+            class="inline-block poke-card"
+          >
+            <app-pokemon-card
+              [pokemon]="card"
+              [remove]="true"
+            ></app-pokemon-card>
+          </div>
+        </div>
+      </section>
+    </igx-card>
+
+    <igx-card style="margin-top: 25px">
+      <igx-card-header
+        class="flex items-center justify-between px-4 py-2 bg-gray-200"
+      >
+        <span class="text-2xl"
+          >Selecione os pokemons que deseja adicionar ao seu deck!
+        </span>
+      </igx-card-header>
+
+      <div class="flex items-center flex-col p-4">
+        <div class="relative w-full">
+          <input
+            type="text"
+            class="w-full bg-gray-200 rounded-l-md rounded-r-md py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            placeholder="Buscar pokémon..."
+            [(ngModel)]="search"
+            (ngModelChange)="getPokemonsFilter()"
+          />
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+          >
+            <svg
+              class="h-5 w-5 text-gray-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div>
+          <igx-drop-down
+            #countriesDropDown
+            [height]="'400px'"
+            [width]="'250px'"
+          >
+            <igx-tree #igxTree selection="BiState"> </igx-tree>
+          </igx-drop-down>
+        </div>
+      </div>
+
       <div
-        *ngFor="let pokemon of allPokemons"
-        class="transition-all duration-300 ease-in-out transform hover:scale-105 hover:cursor-pointer"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
       >
-        <app-pokemon-card
-          [pokemon]="pokemon"
-          (click)="addToDeck(pokemon)"
-        ></app-pokemon-card>
-      </div>
-    </div>
+        <div *ngFor="let i of [].constructor(skeletonCount); let index = index">
+          <ion-skeleton-text
+            *ngIf="loading"
+            animated
+            style="width: 100%; height: 200px"
+          ></ion-skeleton-text>
+        </div>
 
-    <div class="mt-5 w-full flex items-center justify-center">
-      <a
-        routerLink="/pokemons"
-        class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
-        >Ver Mais</a
-      >
-    </div>
-  </igx-card>
+        <div
+          *ngFor="let pokemon of allPokemons"
+          class="transition-all duration-300 ease-in-out transform hover:scale-105 hover:cursor-pointer"
+        >
+          <app-pokemon-card
+            *ngIf="!loading"
+            [pokemon]="pokemon"
+            (click)="addToDeck(pokemon)"
+          ></app-pokemon-card>
+        </div>
+      </div>
+
+      <div class="mt-5 w-full flex items-center justify-center">
+        <a
+          *ngIf="!loadingButton"
+          (click)="getPokemons(true)"
+          class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded hover:scale-105 hover:cursor-pointer"
+        >
+          Ver Mais
+        </a>
+
+        <div *ngIf="loadingButton" class="spinner"></div>
+      </div>
+    </igx-card>
+  </div>
 </div>

@@ -17,4 +17,12 @@ export class PokemonService {
       })
     );
   }
+
+  getAllPokemonsFilter(q: string): Observable<PokemonModel[]> {
+    return this.api.get(`cards?q=name:${q}`).pipe(
+      map((pokemons: any) => {
+        return pokemons.data.map((c: PokemonModel) => new PokemonModel(c));
+      })
+    );
+  }
 }

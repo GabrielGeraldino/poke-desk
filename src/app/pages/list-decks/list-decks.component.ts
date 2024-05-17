@@ -2,7 +2,7 @@ import { CardsAddComponent } from './../../components/cards-add/cards-add.compon
 import { Component, OnInit } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { SharedService } from '../../services/shared/shared.service';
 import { ComponentsModule } from '../../components/components.module';
 
@@ -17,7 +17,8 @@ export class ListDecksComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private modalController: ModalController,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private alertController: AlertController
   ) {
     this.deckForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -25,14 +26,16 @@ export class ListDecksComponent implements OnInit {
     });
   }
 
+  edit = false;
   title = 'list-decks';
   decks: any[] = [];
   createForm = false;
   deckForm: FormGroup;
 
-  ngOnInit() {
+  async ngOnInit() {
     const decksData = localStorage.getItem('decks');
     this.decks = decksData ? JSON.parse(decksData) : [];
+    await this.getCardsCount();
   }
 
   createDeck() {
@@ -44,10 +47,15 @@ export class ListDecksComponent implements OnInit {
         const deck = {
           name: nameControl.value,
           image: imageControl.value,
+          isEditMode: false,
+          deckColors: [],
+          pokemonsCard: 0,
+          trainerCard: 0,
         };
 
-        this.saveToLocalStorage(deck);
+        let newDeck = this.saveToLocalStorage(deck);
         this.createForm = false;
+        this.selectedDeckModal(newDeck.id, true);
       }
     }
   }
@@ -59,12 +67,59 @@ export class ListDecksComponent implements OnInit {
       id: this.generateUniqueId(),
       name: deck.name,
       image: deck.image,
+      pokemonsCard: deck.pokemonsCard,
+      trainerCard: deck.trainerCard,
+      deckColors: deck.deckColors,
       cards: [],
     };
     decks.push(newDeck);
     localStorage.setItem('decks', JSON.stringify(decks));
+    return newDeck;
+  }
 
-    this.ngOnInit();
+  async confirmDelete(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Tem certeza que deseja exlcuir o deck?',
+      message: 'Se você excluir, perderá as cartas salvas!',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          role: 'confirm',
+          handler: () => {
+            this.deleteDeck(id);
+          },
+        },
+      ],
+      cssClass: 'custon-alert',
+    });
+    await alert.present();
+  }
+
+  deleteDeck(id: string) {
+    const decksData = localStorage.getItem('decks');
+    if (decksData) {
+      const decks = JSON.parse(decksData);
+      const updatedDecks = decks.filter((deck: any) => deck.id !== id);
+      localStorage.setItem('decks', JSON.stringify(updatedDecks));
+      this.modalController.dismiss();
+      this.ngOnInit();
+    }
+  }
+
+  editDeck(id: string, name: string) {
+    const decksData = localStorage.getItem('decks');
+    if (decksData) {
+      const decks = JSON.parse(decksData);
+      const deckIndex = decks.findIndex((deck: any) => deck.id === id);
+      if (deckIndex !== -1) {
+        decks[deckIndex].name = name;
+        localStorage.setItem('decks', JSON.stringify(decks));
+      }
+    }
   }
 
   generateUniqueId(): string {
@@ -89,25 +144,49 @@ export class ListDecksComponent implements OnInit {
       }
     };
     reader.readAsDataURL(file);
-
-    console.log('this.deckForm', this.deckForm);
   }
 
-  async selectedDeckModal(deckId: any) {
-    console.log('teste');
+  async getCardsCount() {
+    for await (const deck of this.decks) {
+      if (deck.pokemonsCard + deck.trainerCard != deck.cards.length) {
+        await deck.cards.forEach((card: any) => {
+          card.types.forEach((cl: string) => {
+            if (!deck.deckColors.includes(cl)) {
+              deck.deckColors.push(cl);
+            }
+          });
+          if (card.supertype == 'Pokémon') {
+            deck.pokemonsCard++;
+          } else if (card.supertype == 'Trainer') {
+            deck.trainerCard++;
+          }
+        });
+      }
+    }
+
+    localStorage.setItem('decks', JSON.stringify(this.decks));
+  }
+
+  async selectedDeckModal(deckId: any, newDeck?: boolean) {
     const modal = await this.modalController.create({
       component: CardsAddComponent,
       cssClass: 'custom-modal',
       componentProps: {
         deckId: deckId,
       },
+      backdropDismiss: false,
     });
 
     await modal.present();
 
-    await modal.onDidDismiss().then(async (value: any) => {
-      // if (value.data) {
-      // }
+    await modal.onDidDismiss().then(async (data: any) => {
+      if (newDeck) {
+        if (data.data.deck.cards.length < 27 || data.data.close) {
+          this.deleteDeck(data.data.deck.id);
+        }
+      }
+
+      this.ngOnInit();
     });
   }
 }

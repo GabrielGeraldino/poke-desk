@@ -14,6 +14,14 @@ export const routes: Routes = [
     component: HomePageComponent,
     data: { text: 'home-page' },
   },
-  { path: 'pokemons', component: PokemonsComponent, data: { text: 'pokemons' } },
-  { path: 'list-decks', component: ListDecksComponent, data: { text: 'list-decks' } }
+  {
+    path: 'pokemons',
+    component: PokemonsComponent,
+    data: { text: 'pokemons' },
+  },
+  {
+    path: 'list-decks',
+    component: ListDecksComponent,
+    data: { text: 'list-decks' },
+  },
 ];
