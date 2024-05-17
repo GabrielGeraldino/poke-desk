@@ -20,6 +20,8 @@
     "@angular/router": "^17.3.0",
     "@igniteui/material-icons-extended": "^3.0.0",
     "@ionic/angular": "^8.1.2",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
     "fflate": "^0.8.1",
     "igniteui-angular": "^17.2.1",
     "minireset.css": "~0.0.4",
@@ -32,6 +34,7 @@
     "@angular/cli": "^17.3.7",
     "@angular/compiler-cli": "^17.3.0",
     "@igniteui/angular-schematics": "~17.2.1320",
+    "@ionic/angular-toolkit": "latest",
     "@types/hammerjs": "^2.0.40",
     "@types/jasmine": "~5.1.0",
     "autoprefix": "^1.0.1",
@@ -44,7 +47,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
-    "typescript": "~5.4.2",
-    "@ionic/angular-toolkit": "latest"
+    "typescript": "~5.4.2"
   }
 }

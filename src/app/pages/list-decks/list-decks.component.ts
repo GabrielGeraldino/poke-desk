@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, ModalController } from '@ionic/angular';
 import { SharedService } from '../../services/shared/shared.service';
 import { ComponentsModule } from '../../components/components.module';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-list-decks',
@@ -18,7 +19,8 @@ export class ListDecksComponent implements OnInit {
     private formBuilder: FormBuilder,
     private modalController: ModalController,
     private sharedService: SharedService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private translate: TranslateService
   ) {
     this.deckForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -79,15 +81,15 @@ export class ListDecksComponent implements OnInit {
 
   async confirmDelete(id: string) {
     const alert = await this.alertController.create({
-      header: 'Tem certeza que deseja exlcuir o deck?',
-      message: 'Se você excluir, perderá as cartas salvas!',
+      header: this.translate.instant('listDecks.controllerHeader'),
+      message: this.translate.instant('listDecks.controllerMessage'),
       buttons: [
         {
-          text: 'Cancelar',
+          text: this.translate.instant('common.cancel'),
           role: 'cancel',
         },
         {
-          text: 'Confirmar',
+          text: this.translate.instant('common.confirm'),
           role: 'confirm',
           handler: () => {
             this.deleteDeck(id);

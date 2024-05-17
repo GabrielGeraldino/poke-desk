@@ -16,6 +16,7 @@ import {
 import { PokemonCardComponent } from '../pokemon-card/pokemon-card.component';
 import { SharedService } from '../../services/shared/shared.service';
 import { AlertController, ModalController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-cards-add',
@@ -29,7 +30,8 @@ export class CardsAddComponent implements OnInit {
     private pokemonService: PokemonService,
     private sharedService: SharedService,
     private alertController: AlertController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private translate: TranslateService
   ) {}
 
   filter: PokemonFilterModel = new PokemonFilterModel();
@@ -79,7 +81,6 @@ export class CardsAddComponent implements OnInit {
       );
 
       this.allTypes = res.data;
-      console.log('this.allTypes', this.allTypes);
     } catch (error) {
       this.loadingButton = false;
       console.error('error', error);
@@ -146,7 +147,6 @@ export class CardsAddComponent implements OnInit {
       }
 
       this.loadingButton = false;
-      console.log('this.allPokemons', this.allPokemons);
     } catch (error) {
       this.loadingButton = false;
       console.error('error', error);
@@ -209,7 +209,6 @@ export class CardsAddComponent implements OnInit {
   }
 
   async resetOthersFilter(filterType: any) {
-    console.log('filterType', filterType);
     if (filterType != 'types') {
       this.selectedType = '';
     }
@@ -222,18 +221,13 @@ export class CardsAddComponent implements OnInit {
     if (filterType != 'rarities') {
       this.selectedRarity = '';
     }
-
-    console.log('this.selectedType', this.selectedType);
-    console.log('this.selectedSubtype', this.selectedSubtype);
-    console.log('this.selectedSupertype', this.selectedSupertype);
-    console.log('this.selectedRarity', this.selectedRarity);
   }
 
   async addToDeck(pokemon: PokemonModel) {
     if (this.deckIndex !== -1) {
       if (this.decks[this.deckIndex].cards.length >= 60) {
         this.sharedService.showToast(
-          'Você já atingiu o número máximo de 60 cartas neste deck.',
+          this.translate.instant('cardsAdd.maxCards'),
           2500,
           'danger'
         );
@@ -251,7 +245,7 @@ export class CardsAddComponent implements OnInit {
           ).length >= 4
         ) {
           this.sharedService.showToast(
-            'Ja possuem 4 cartas com o mesmo nome!',
+            this.translate.instant('cardsAdd.sameNameCards'),
             2500,
             'danger'
           );
@@ -270,7 +264,9 @@ export class CardsAddComponent implements OnInit {
 
     this.getCount();
 
-    await this.sharedService.showToast('Cards salvo com sucesso!');
+    await this.sharedService.showToast(
+      this.translate.instant('cardsAdd.saveSuccess')
+    );
     await this.modalController.dismiss({
       deck: this.decks[this.deckIndex],
     });
@@ -282,15 +278,15 @@ export class CardsAddComponent implements OnInit {
 
   async close() {
     const alert = await this.alertController.create({
-      header: 'Tem certeza que deseja fechar?',
-      message: 'Se você fechar, seu deck não será salvo!',
+      header: this.translate.instant('cardsAdd.controllerHeader'),
+      message: this.translate.instant('cardsAdd.controllerMessage'),
       buttons: [
         {
-          text: 'Cancelar',
+          text: this.translate.instant('common.cancel'),
           role: 'cancel',
         },
         {
-          text: 'Confirmar',
+          text: this.translate.instant('common.confirm'),
           role: 'confirm',
           handler: () => {
             this.modalController.dismiss({

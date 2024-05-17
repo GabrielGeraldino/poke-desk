@@ -48,7 +48,6 @@ export class PokemonsComponent implements OnInit {
       }
 
       this.loadingButton = false;
-      console.log('this.allPokemons', this.allPokemons);
     } catch (error) {
       this.loadingButton = false;
       console.error('error', error);
@@ -72,7 +71,6 @@ export class PokemonsComponent implements OnInit {
           )
         ).then((res: PokemonModel[]) => {
           this.allPokemons = res;
-          console.log('this.allPokemons', this.allPokemons);
         });
       } catch (error) {
         console.error('error', error);

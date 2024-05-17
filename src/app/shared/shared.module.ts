@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { PipesModule } from '../pipes/pipes.module';
+
 import {
   IgxInputGroupModule,
   IgxButtonModule,
@@ -18,6 +19,7 @@ import {
   IgxSelectModule,
 } from 'igniteui-angular';
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [],
@@ -41,6 +43,7 @@ import { IonicModule } from '@ionic/angular';
     IgxToastModule,
     IgxSelectModule,
     IonicModule.forRoot(),
+    TranslateModule,
   ],
   exports: [
     CommonModule,
@@ -62,6 +65,7 @@ import { IonicModule } from '@ionic/angular';
     IgxToastModule,
     IgxSelectModule,
     IonicModule,
+    TranslateModule,
   ],
 })
 export class SharedModule {}

@@ -4,28 +4,28 @@
       <button
         (click)="close()"
         class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-2"
+        translate
       >
-        Fechar
+        common.close
       </button>
       <button
         (click)="saveDecksToLocalStorage()"
         class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
         [disabled]="deckLength < 24"
+        translate
       >
-        Salvar
+        common.save
       </button>
       <div class="mt-4" *ngIf="deckLength < 24">
-        <span class="text-red-400"
-          >Seu deck deve conter no mínimo 24 cartas para salvar!</span
-        >
+        <span class="text-red-400" translate>cardsAdd.minDeck</span>
       </div>
     </div>
     <igx-card class="mt-16">
       <igx-card-header
         class="flex items-center justify-between px-4 py-2 bg-gray-200"
       >
-        <span class="text-2xl"
-          >Pokemons do meu deck: {{ deckLength }} / 60
+        <span class="text-2xl" translate>
+          <span translate>cardsAdd.pokemonsInMyDeck</span> {{ deckLength }} / 60
         </span>
       </igx-card-header>
 
@@ -60,9 +60,7 @@
       <igx-card-header
         class="flex items-center justify-between px-4 py-2 bg-gray-200"
       >
-        <span class="text-2xl"
-          >Selecione os pokemons que deseja adicionar ao seu deck!
-        </span>
+        <span class="text-2xl" translate>cardsAdd.selectPokemons </span>
       </igx-card-header>
 
       <div class="flex items-center flex-col p-4">
@@ -199,8 +197,9 @@
           *ngIf="!loadingButton"
           (click)="search ? getPokemonsFilter(null, true) : getPokemons(true)"
           class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded hover:scale-105 hover:cursor-pointer"
+          translate
         >
-          Ver Mais
+          common.seeMore
         </a>
 
         <div *ngIf="loadingButton" class="spinner"></div>

@@ -4,7 +4,7 @@
 >
   <div class="flex items-center flex-col">
     <section class="p-9">
-      <span class="text-3xl">Pokemons para visualizar!</span>
+      <span class="text-3xl" translate>pokemons.pokemonsToSee</span>
     </section>
 
     <div class="relative w-full mb-5">
@@ -62,8 +62,9 @@
       *ngIf="!loadingButton"
       (click)="getPokemons(true)"
       class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded hover:scale-105 hover:cursor-pointer"
+      translate
     >
-      Ver Mais
+      common.seeMore
     </a>
 
     <div *ngIf="loadingButton" class="spinner"></div>

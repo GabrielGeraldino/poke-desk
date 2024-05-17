@@ -6,23 +6,27 @@
     <igx-card-header
       class="flex items-center justify-between px-4 py-2 bg-gray-200"
     >
-      <div class="text-black font-bold text-xl">Decks</div>
+      <div class="text-black font-bold text-xl" translate>listDecks.decks</div>
     </igx-card-header>
     <igx-card-content
       class="px-4 py-2 flex flex-col items-center justify-center"
     >
       <div class="text-center">
         <div *ngIf="decks.length == 0">
-          <h2 class="text-2xl font-bold mb-4">Nenhum deck criado</h2>
-          <p class="text-gray-600 mb-6">
+          <h2 class="text-2xl font-bold mb-4" translate>listDecks.noneDeck</h2>
+          <p class="text-gray-600 mb-6" translate>
             Você ainda não criou nenhum deck. Clique no botão abaixo para
             começar.
           </p>
         </div>
 
         <div>
-          <h2 *ngIf="decks.length > 0" class="text-2xl font-bold mb-4">
-            Meus Decks
+          <h2
+            *ngIf="decks.length > 0"
+            class="text-2xl font-bold mb-4"
+            translate
+          >
+            listDecks.myDecks
           </h2>
 
           <button
@@ -30,16 +34,21 @@
             igxRipple
             class="igx-button--flat"
             (click)="createForm = true"
+            translate
           >
-            Criar Novo Deck
+            listDecks.newDeck
           </button>
 
           <div *ngIf="createForm" class="mt-6">
-            <h3 class="text-xl font-bold mb-4">Criar Novo Deck</h3>
+            <h3 class="text-xl font-bold mb-4" translate>listDecks.newDeck</h3>
             <form [formGroup]="deckForm" (ngSubmit)="createDeck()">
               <div class="mb-4">
-                <label for="name" class="block text-gray-700 font-bold mb-2">
-                  Nome do Deck
+                <label
+                  for="name"
+                  class="block text-gray-700 font-bold mb-2"
+                  translate
+                >
+                  listDecks.deckName
                 </label>
                 <input
                   id="name"
@@ -50,8 +59,12 @@
                 />
               </div>
               <div class="mb-4">
-                <label for="image" class="block text-gray-700 font-bold mb-2">
-                  Imagem do Deck
+                <label
+                  for="image"
+                  class="block text-gray-700 font-bold mb-2"
+                  translate
+                >
+                  listDecks.deckImage
                 </label>
                 <input
                   id="image"
@@ -67,8 +80,9 @@
                 igxRipple
                 class="igx-button--flat"
                 [disabled]="!deckForm.valid"
+                translate
               >
-                Escolher cartas
+                listDecks.chooseCards
               </button>
             </form>
           </div>
@@ -88,21 +102,25 @@
                     class="w-full h-full object-cover max-h-80 min-h-20"
                   />
                   <div>
-                    <span>Cartas: {{ deck.cards.length }} / 60</span>
+                    <span translate
+                      >listDecks.cardsCount {{ deck.cards.length }} / 60</span
+                    >
                   </div>
 
                   <div>
                     <igx-chip class="p-2"
-                      >Cartas de Pokémon: {{ deck.pokemonsCard }}</igx-chip
+                      ><span translate>listDecks.pokemonCards</span>
+                      {{ deck.pokemonsCard }}</igx-chip
                     >
                     <igx-chip class="p-2"
-                      >Cartas de Treinador: {{ deck.trainerCard }}</igx-chip
+                      ><span translate>listDecks.traineeCards</span>
+                      {{ deck.trainerCard }}</igx-chip
                     >
                   </div>
 
                   <section class="colors-chip">
-                    <igx-chip class="p-2"
-                      >Cores no baralho:
+                    <igx-chip class="p-2">
+                      <span translate>listDecks.colorsDeck</span>
                       <span
                         class="chip-content"
                         *ngFor="let color of deck.deckColors"
